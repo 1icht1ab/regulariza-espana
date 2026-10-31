@@ -1,8 +1,8 @@
 import { Card, PageHeader } from '../components/ui'
 
 // TODO antes de publicar: completar RESPONSABLE y CONTACTO con datos reales.
-const RESPONSABLE = '[COMPLETAR: nombre o razón social del responsable]'
-const CONTACTO = '[COMPLETAR: email de contacto para privacidad]'
+const RESPONSABLE = 'Luz Lucia Guzman'
+const CONTACTO = 'regularizacion2026.es@gmail.com'
 
 function S({ t, children }) {
   return (
