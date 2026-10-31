@@ -25,13 +25,15 @@ export default function Foro() {
   const [q, setQ] = useState('')
   const [nuevo, setNuevo] = useState(null)
   const [error, setError] = useState('')
+  const [errorCarga, setErrorCarga] = useState('')
+  const [enviando, setEnviando] = useState(false)
   const [cargando, setCargando] = useState(true)
 
   const cargar = useCallback(async () => {
     if (!supabase) return setCargando(false)
     let query = supabase
       .from('re_threads')
-      .select('id, categoria, titulo, contenido, provincia, estado_tramite, created_at, autor:re_profiles(alias, avatar), re_replies(count), re_likes(count)')
+      .select('id, categoria, titulo, contenido, provincia, estado_tramite, created_at, autor:re_profiles!re_threads_author_id_fkey(alias, avatar), re_replies(count), re_likes(count)')
       .order('created_at', { ascending: false })
       .limit(50)
     if (cat !== 'Todas') query = query.eq('categoria', cat)
@@ -40,7 +42,7 @@ export default function Foro() {
       query = query.or(`titulo.ilike.%${t}%,contenido.ilike.%${t}%,provincia.ilike.%${t}%`)
     }
     const { data, error } = await query
-    if (error) setError(mensajeError(error))
+    setErrorCarga(error ? 'No se pudieron cargar los mensajes. Recarga la página.' : '')
     setHilos(data || [])
     setCargando(false)
   }, [cat, q])
@@ -55,7 +57,9 @@ export default function Foro() {
     setError('')
     const pii = detectarDatoPersonal(`${nuevo.titulo} ${nuevo.contenido}`)
     if (pii) return setError(`Tu mensaje parece contener ${pii}. Quítalo antes de publicar.`)
+    setEnviando(true)
     const { error } = await supabase.from('re_threads').insert({ ...nuevo, author_id: user.id })
+    setEnviando(false)
     if (error) return setError(mensajeError(error))
     setNuevo(null)
     cargar()
@@ -84,7 +88,7 @@ export default function Foro() {
               {error && <Aviso tipo="error">{error}</Aviso>}
               <div className="flex gap-2 justify-end">
                 <button type="button" className={btnSecondary} onClick={() => { setNuevo(null); setError('') }}>Cancelar</button>
-                <button className={btnPrimary}>Publicar</button>
+                <button className={btnPrimary} disabled={enviando}>{enviando ? 'Publicando…' : 'Publicar'}</button>
               </div>
             </form>
           </Card>
@@ -112,6 +116,7 @@ export default function Foro() {
         <input className={`${inputCls} pl-9`} value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar por provincia o tema…" aria-label="Buscar en el foro" />
       </div>
 
+      {errorCarga && <div className="mb-3"><Aviso tipo="error">{errorCarga}</Aviso></div>}
       {cargando ? (
         <p className="text-sm text-slate-600">Cargando…</p>
       ) : hilos.length === 0 ? (

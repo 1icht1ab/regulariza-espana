@@ -23,7 +23,7 @@ export default function Hilo() {
     if (!supabase) return
     const { data } = await supabase
       .from('re_threads')
-      .select('id, author_id, categoria, titulo, contenido, provincia, estado_tramite, created_at, autor:re_profiles(alias, avatar), re_replies(id, author_id, texto, provincia, estado_tramite, created_at, autor:re_profiles(alias, avatar))')
+      .select('id, author_id, categoria, titulo, contenido, provincia, estado_tramite, created_at, autor:re_profiles!re_threads_author_id_fkey(alias, avatar), re_replies(id, author_id, texto, provincia, estado_tramite, created_at, autor:re_profiles!re_replies_author_id_fkey(alias, avatar))')
       .eq('id', id)
       .order('created_at', { referencedTable: 're_replies', ascending: true })
       .maybeSingle()
