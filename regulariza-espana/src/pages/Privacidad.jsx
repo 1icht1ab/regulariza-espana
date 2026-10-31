@@ -1,6 +1,6 @@
-import { Card, PageHeader } from '../components/ui'
+import { useI18n } from '../i18n'
+import { Card, PageHeader, Aviso } from '../components/ui'
 
-// TODO antes de publicar: completar RESPONSABLE y CONTACTO con datos reales.
 const RESPONSABLE = 'Luz Lucia Guzman'
 const CONTACTO = 'regularizacion2026.es@gmail.com'
 
@@ -13,41 +13,33 @@ function S({ t, children }) {
   )
 }
 
+function Par({ par }) {
+  return <p><strong>{par[0]}</strong> {par[1]}</p>
+}
+
 export default function Privacidad() {
+  const { t } = useI18n()
+  const nota = t('priv.versionValida')
   return (
     <>
-      <PageHeader kicker="Legal" title="Política de privacidad" />
+      <PageHeader kicker={t('priv.kicker')} title={t('priv.titulo')} />
+      {nota && <div className="mb-4"><Aviso tipo="info">{nota}</Aviso></div>}
       <Card>
-        <S t="Quién es responsable">
-          <p>{RESPONSABLE}. Contacto: {CONTACTO}.</p>
+        <S t={t('priv.responsable')}>
+          <p>{RESPONSABLE}. {t('priv.contacto')} <a href={`mailto:${CONTACTO}`} className="underline text-blue-700" dir="ltr">{CONTACTO}</a></p>
         </S>
-        <S t="Qué datos tratamos">
-          <p><strong>Cuenta:</strong> email (solo para verificar la cuenta y entrar; nunca se muestra), alias y avatar.</p>
-          <p><strong>Trámite (opcional):</strong> impreso, estado, provincia, nacionalidad, fechas de entrega y resolución, fecha de ingreso (privada),
-            si fue con abogado, situación, y casillas sí/no (empadronamiento, NIE recibido, NUSS recibido, documentos aportados).</p>
-          <p><strong>Foro:</strong> los mensajes que publiques.</p>
-          <p><strong>No pedimos ni guardamos</strong> números de NIE, NUSS, DNI, pasaporte, expediente, teléfono ni dirección. El foro bloquea automáticamente los mensajes que los contienen.</p>
+        <S t={t('priv.datos')}>
+          <Par par={t('priv.datosCuenta')} />
+          <Par par={t('priv.datosTramite')} />
+          <Par par={t('priv.datosForo')} />
+          <Par par={t('priv.datosNo')} />
         </S>
-        <S t="Para qué y con qué base">
-          <p>Para que funcione la comunidad y para calcular estadísticas agregadas. La base legal es tu consentimiento, que puedes retirar cuando quieras borrando tus datos.</p>
-        </S>
-        <S t="Qué se ve públicamente">
-          <p>Tu alias y avatar; en la actividad reciente, además: provincia, impreso, estado, nacionalidad, mes y año de entrega y las casillas marcadas.
-            Las estadísticas por provincia solo aparecen con 10 casos o más. Tu email y tu fecha de ingreso no se muestran nunca.</p>
-        </S>
-        <S t="Dónde se guardan">
-          <p>En una base de datos de Supabase alojada en la Unión Europea (Irlanda). La web se sirve desde Vercel.</p>
-        </S>
-        <S t="Cuánto tiempo">
-          <p>Mientras mantengas tu cuenta. Al borrarla, se eliminan tu perfil, tu trámite, tus mensajes y tus “útil”.</p>
-        </S>
-        <S t="Tus derechos">
-          <p>Puedes acceder, rectificar y borrar tus datos desde “Mi trámite”. Para otros derechos (oposición, limitación, portabilidad) escribe a {CONTACTO}.
-            También puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p>
-        </S>
-        <S t="Sin asesoramiento jurídico">
-          <p>RegularizaEspaña es una comunidad independiente. No es una web oficial y lo que se publica son experiencias personales, no asesoramiento jurídico.</p>
-        </S>
+        <S t={t('priv.para')}><p>{t('priv.paraTxt')}</p></S>
+        <S t={t('priv.publico')}><p>{t('priv.publicoTxt')}</p></S>
+        <S t={t('priv.donde')}><p>{t('priv.dondeTxt')}</p></S>
+        <S t={t('priv.cuanto')}><p>{t('priv.cuantoTxt')}</p></S>
+        <S t={t('priv.derechos')}><p>{t('priv.derechosTxt', { c: CONTACTO })}</p></S>
+        <S t={t('priv.sinAseso')}><p>{t('priv.sinAsesoTxt')}</p></S>
       </Card>
     </>
   )

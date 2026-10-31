@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
 import { AuthProvider } from './context/AuthContext'
+import { ThemeProvider } from './context/ThemeContext'
+import { I18nProvider } from './i18n'
 import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
 import MiTramite from './pages/MiTramite'
@@ -16,6 +18,8 @@ import NoEncontrado from './pages/NoEncontrado'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <I18nProvider>
+    <ThemeProvider>
     <AuthProvider>
       <BrowserRouter>
         <Routes>
@@ -33,5 +37,7 @@ createRoot(document.getElementById('root')).render(
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+    </ThemeProvider>
+    </I18nProvider>
   </StrictMode>,
 )

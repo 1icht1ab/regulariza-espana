@@ -1,4 +1,5 @@
 import { CheckCircle2, Clock, XCircle, AlertCircle } from 'lucide-react'
+import { useI18n } from '../i18n'
 
 export function Card({ className = '', children }) {
   return <div className={`bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 ${className}`}>{children}</div>
@@ -22,12 +23,13 @@ const ESTILOS = {
 }
 
 export function StatusBadge({ estado }) {
+  const { tv } = useI18n()
   if (!estado) return null
   const [cls, Icon] = ESTILOS[estado] || ESTILOS['En espera']
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold border ${cls}`}>
       <Icon className="w-3.5 h-3.5" aria-hidden="true" />
-      {estado === 'Requerimiento de documentación' ? 'Requerimiento' : estado}
+      {tv('estadoCorto', estado) !== estado ? tv('estadoCorto', estado) : tv('estado', estado)}
     </span>
   )
 }
@@ -51,11 +53,14 @@ export const btnPrimary =
 export const btnSecondary =
   'inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-800 text-sm font-semibold hover:bg-slate-50'
 
-export function tiempoRelativo(iso) {
-  const s = Math.round((Date.now() - new Date(iso).getTime()) / 1000)
-  if (s < 60) return 'Ahora mismo'
-  if (s < 3600) return `Hace ${Math.floor(s / 60)} min`
-  if (s < 86400) return `Hace ${Math.floor(s / 3600)} h`
-  if (s < 172800) return 'Ayer'
-  return new Date(iso).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+export function useTiempoRelativo() {
+  const { t, locale } = useI18n()
+  return (iso) => {
+    const s = Math.round((Date.now() - new Date(iso).getTime()) / 1000)
+    if (s < 60) return t('comun.ahora')
+    if (s < 3600) return t('comun.haceMin', { n: Math.floor(s / 60) })
+    if (s < 86400) return t('comun.haceH', { n: Math.floor(s / 3600) })
+    if (s < 172800) return t('comun.ayer')
+    return new Date(iso).toLocaleDateString(locale, { day: 'numeric', month: 'short' })
+  }
 }
